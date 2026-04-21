@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Controle de Animais Silvestres</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --verde-escuro: #1a3a1f;
+    --verde-medio: #2d5a35;
+    --verde-claro: #3d7a47;
+    --verde-menta: #4caf6e;
+    --verde-suave: #e8f5e9;
+    --verde-folha: #a5d6a7;
+    --marrom: #5d4037;
+    --bege: #f5f0e8;
+    --texto: #1a2e1c;
+    --texto-claro: #4a6741;
+    --branco: #ffffff;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bege);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(160deg, var(--verde-escuro) 0%, var(--verde-medio) 60%, var(--verde-claro) 100%);
+    padding: 80px 40px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(76,175,110,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(76,175,110,0.1) 0%, transparent 50%);
+  }
+
+  .hero-icon {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    color: var(--branco);
+    line-height: 1.2;
+    position: relative;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--verde-folha);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--verde-folha);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  /* WAVE */
+  .wave {
+    display: block;
+    margin-top: -2px;
+    width: 100%;
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--verde-escuro);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--verde-folha);
+    opacity: 0.4;
+  }
+
+  /* MENU CARD */
+  .menu-card {
+    background: var(--verde-escuro);
+    border-radius: 16px;
+    padding: 32px;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 20px 60px rgba(26,58,31,0.25);
+  }
+
+  .menu-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .menu-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .menu-dot.red { background: #ff5f57; }
+  .menu-dot.yellow { background: #ffbd2e; }
+  .menu-dot.green { background: #28ca41; }
+
+  .menu-title {
+    color: var(--verde-menta);
+    font-size: 13px;
+    text-align: center;
+    border: 1px solid rgba(76,175,110,0.3);
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .menu-divider {
+    border: none;
+    border-top: 1px solid rgba(76,175,110,0.2);
+    margin: 12px 0;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #c8e6c9;
+    font-size: 14px;
+  }
+
+  .menu-item:hover {
+    background: rgba(76,175,110,0.15);
+    color: var(--verde-menta);
+  }
+
+  .menu-item .num {
+    color: var(--verde-menta);
+    font-weight: 600;
+    min-width: 20px;
+  }
+
+  .menu-item.exit {
+    color: #ef9a9a;
+    margin-top: 8px;
+  }
+
+  .menu-item.exit .num { color: #ef9a9a; }
+
+  /* FUNCIONALIDADES */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .feature-card {
+    background: var(--branco);
+    border: 1px solid rgba(76,175,110,0.2);
+    border-radius: 14px;
+    padding: 28px 22px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--verde-menta), var(--verde-claro));
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(26,58,31,0.12);
+  }
+
+  .feature-icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--verde-escuro);
+    margin-bottom: 8px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--texto-claro);
+    line-height: 1.6;
+  }
+
+  /* ANIMAL CARD */
+  .animal-preview {
+    background: var(--branco);
+    border: 1px solid rgba(76,175,110,0.2);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(26,58,31,0.08);
+  }
+
+  .animal-header {
+    background: var(--verde-suave);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(76,175,110,0.15);
+  }
+
+  .animal-header span {
+    font-size: 13px;
+    color: var(--texto-claro);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .animal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .animal-table thead tr {
+    background: var(--verde-escuro);
+    color: var(--verde-folha);
+  }
+
+  .animal-table thead th {
+    padding: 12px 20px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .animal-table tbody tr {
+    border-bottom: 1px solid rgba(76,175,110,0.1);
+    transition: background 0.15s;
+  }
+
+  .animal-table tbody tr:hover {
+    background: var(--verde-suave);
+  }
+
+  .animal-table tbody td {
+    padding: 14px 20px;
+    color: var(--texto);
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .status-resgatado { background: #fff3cd; color: #856404; }
+  .status-tratamento { background: #cfe2ff; color: #084298; }
+  .status-solto { background: #d1e7dd; color: #0a3622; }
+
+  /* ESTRUTURA DO PROJETO */
+  .estrutura {
+    background: var(--verde-escuro);
+    border-radius: 16px;
+    padding: 32px;
+    font-family: 'Courier New', monospace;
+    color: #c8e6c9;
+    font-size: 14px;
+    line-height: 2;
+  }
+
+  .estrutura .pasta { color: var(--verde-menta); font-weight: 600; }
+  .estrutura .arquivo-c { color: #90caf9; }
+  .estrutura .arquivo-h { color: #ffe082; }
+  .estrutura .arquivo-txt { color: #a5d6a7; }
+  .estrutura .comentario { color: #78909c; font-style: italic; }
+  .estrutura .linha-conector { color: rgba(76,175,110,0.4); }
+
+  /* COMPILAR */
+  .compile-box {
+    background: #0d1117;
+    border-radius: 14px;
+    padding: 28px;
+    border: 1px solid rgba(76,175,110,0.2);
+  }
+
+  .compile-box .cmd-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+  }
+
+  .compile-box .prompt { color: var(--verde-menta); }
+  .compile-box .cmd { color: #e0e0e0; }
+  .compile-box .comment { color: #6a9955; font-size: 13px; margin-bottom: 16px; margin-left: 20px; font-family: 'DM Sans', sans-serif; }
+
+  /* FOOTER */
+  footer {
+    background: var(--verde-escuro);
+    color: var(--verde-folha);
+    text-align: center;
+    padding: 40px 24px;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  footer .footer-icon { font-size: 32px; display: block; margin-bottom: 12px; }
+  footer p { opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="hero-icon">🌿</span>
+  <div class="hero-badge">Linguagem C &nbsp;|&nbsp; VS Code &nbsp;|&nbsp; Terminal</div>
+  <h1>Sistema de Controle<br>de Animais Silvestres</h1>
+  <p>Cadastro, listagem, busca e remoção de animais via terminal</p>
+</header>
+
+<svg class="wave" viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:#2d5a35;">
+  <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z" fill="#f5f0e8"/>
+</svg>
+
+<!-- MENU DO SISTEMA -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">🖥️ Menu do Sistema</h2>
+    <div class="menu-card">
+      <div class="menu-bar">
+        <div class="menu-dot red"></div>
+        <div class="menu-dot yellow"></div>
+        <div class="menu-dot green"></div>
+      </div>
+      <div class="menu-title">CONTROLE DE ANIMAIS SILVESTRES</div>
+      <hr class="menu-divider">
+      <div class="menu-item"><span class="num">[1]</span> Cadastrar Animal</div>
+      <div class="menu-item"><span class="num">[2]</span> Listar Animais</div>
+      <div class="menu-item"><span class="num">[3]</span> Buscar Animal</div>
+      <div class="menu-item"><span class="num">[4]</span> Remover Animal</div>
+      <hr class="menu-divider">
+      <div class="menu-item exit"><span class="num">[0]</span> Sair</div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section class="section" style="background: var(--verde-suave); margin: 0 -24px; padding: 60px 24px;">
+  <div class="container">
+    <h2 class="section-title">⚙️ Funcionalidades</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">📝</span>
+        <div class="feature-title">Cadastrar</div>
+        <div class="feature-desc">Registra um novo animal com ID, nome, espécie, local e status.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📋</span>
+        <div class="feature-title">Listar</div>
+        <div class="feature-desc">Exibe todos os animais salvos no banco de dados em formato de tabela.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔍</span>
+        <div class="feature-title">Buscar</div>
+        <div class="feature-desc">Localiza um animal específico pelo nome de forma rápida.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🗑️</span>
+        <div class="feature-title">Remover</div>
+        <div class="feature-desc">Exclui um registro pelo ID, atualizando o banco de dados automaticamente.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANCO DE DADOS -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">🗃️ Banco de Dados (dados.txt)</h2>
+    <div class="animal-preview">
+      <div class="animal-header">
+        <span>📄 dados.txt — registros salvos</span>
+        <span>3 animais</span>
+      </div>
+      <table class="animal-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Espécie</th>
+            <th>Local</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Onça-pintada</td>
+            <td>Panthera onca</td>
+            <td>Mata do Capibaribe</td>
+            <td><span class="status-badge status-tratamento">Em tratamento</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Tatu-bola</td>
+            <td>Tolypeutes tricinctus</td>
+            <td>Caatinga — PE</td>
+            <td><span class="status-badge status-solto">Solto</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Arara-azul</td>
+            <td>Anodorhynchus hyacinthinus</td>
+            <td>Reserva Ecológica</td>
+            <td><span class="status-badge status-resgatado">Resgatado</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ESTRUTURA DO PROJETO -->
+<section class="section" style="background: var(--verde-suave); margin: 0 -24px; padding: 60px 24px;">
+  <div class="container">
+    <h2 class="section-title">📁 Estrutura de Arquivos</h2>
+    <div class="estrutura">
+      <div><span class="pasta">animais_silvestres/</span> <span class="comentario">&nbsp;← pasta do projeto</span></div>
+      <div>&nbsp;│</div>
+      <div>&nbsp;├── <span class="arquivo-c">main.c</span> <span class="comentario">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← frontend: menu e interação</span></div>
+      <div>&nbsp;├── <span class="arquivo-h">animal.h</span> <span class="comentario">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← estrutura de dados do animal</span></div>
+      <div>&nbsp;├── <span class="arquivo-c">animal.c</span> <span class="comentario">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← backend: lógica e funções</span></div>
+      <div>&nbsp;└── <span class="arquivo-txt">dados.txt</span> <span class="comentario">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← banco de dados (gerado pelo sistema)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPILAR E RODAR -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">🚀 Compilar e Rodar</h2>
+    <div class="compile-box">
+      <div class="cmd-line">
+        <span class="prompt">$</span>
+        <span class="cmd">gcc main.c animal.c -o sistema</span>
+      </div>
+      <div class="comment">// compila todos os arquivos e gera o executável</div>
+      <div class="cmd-line">
+        <span class="prompt">$</span>
+        <span class="cmd">.\sistema.exe</span>
+      </div>
+      <div class="comment">// executa o programa no Windows</div>
+      <div class="cmd-line">
+        <span class="prompt">$</span>
+        <span class="cmd">./sistema</span>
+      </div>
+      <div class="comment">// executa o programa no Linux / Mac</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-icon">🌿</span>
+  <p>Sistema de Controle de Animais Silvestres</p>
+  <p>Desenvolvido em linguagem C &nbsp;·&nbsp; Análise e Desenvolvimento de Sistemas</p>
+</footer>
+
+</body>
+</html>
